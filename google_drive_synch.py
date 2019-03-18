@@ -7,15 +7,15 @@ from common import Map, Pair, File
 class GoogleDriveSynch:
     FOLDER_MIMETYPE = 'application/vnd.google-apps.folder'
     GOOGLE_DOCUMENT_MIMETYPE = 'application/vnd.google-apps.document'
+    CREDENTIALS_FILE = 'credenetials.json'
 
     def __init__(self, folder_path):
-        self.matched_files = []
         self.drive_service = DriverSerivce(
             'https://www.googleapis.com/auth/drive',
-            'credentials.json')
+            GoogleDriveSynch.CREDENTIALS_FILE)
         self.folder_path = folder_path
-        self.__take_metadata_from_local()
-        self.__take_metadata_from_remote()
+        self.local_tree = self.__take_metadata_from_local()
+        self.remote_tree = self.__take_metadata_from_local()
 
     def synchronize(self):
         pass
@@ -89,10 +89,4 @@ class GoogleDriveSynch:
         return hash_md5.hexdigest()
 
 
-googleDrive = GoogleDriveSynch("/home/sluski/files/")
-for i in googleDrive.matched_files:
-    print(i.value.first.return_as_dict())
-    print(i.value.second.return_as_dict())
-# googleDrive.synchronize()
-# googleDrive.download_all()
-# print(googleDrive.matched_files)
+

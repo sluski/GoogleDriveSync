@@ -15,17 +15,16 @@ class DriverSerivce:
         self.creds = self.auth_instance.getCredetials()
         self.drive_service = build('drive', 'v3', credentials=self.creds)
 
-
-    def list_files(self, size=100):
+    def list_files(self, size):
         results = self.drive_service.files().list(
-            pageSize=size, fields="nextPageToken, %s" % DriverSerivce.DEFAULT_FILES).execute()
+            pageSize=size, fields="nextPageToken, {}".format(DriverSerivce.DEFAULT_FILES)).execute()
         items = results.get('files', [])
 
         return items
 
     def list_files_only(self, size=100):
         result = []
-        for item in self.list_files():
+        for item in self.list_files(size):
             if item['mimeType'] not in [DriverSerivce.FOLDER_MIMETYPE, DriverSerivce.GOOGLE_DOCUMENT_MIMETYPE]:
                 result.append(item)
         return result
@@ -51,7 +50,6 @@ class DriverSerivce:
             bio.seek(0)
             f.write(bio.read())
 
-
     def __search_file(self, size, query):
         results = self.drive_service.files().list(
             pageSize=size, fields="nextPageToken, %s" % DriverSerivce.DEFAULT_FILES, q=query).execute()
@@ -67,16 +65,3 @@ class DriverSerivce:
     def search_file_mediatype(self, size, mimetype):
         query = "mimeType = '{}'".format(mimetype)
         return self.search_file(self, size, query)
-
-
-    # list_files(10)
-    # print('____________')
-    # save_file('notes', '/home/sluski/Documents/notes/', 'text/plain')
-    # print('____________')
-    # list_files(10)
-    # print('____________')
-    # download_file('1Q96A0EBzjiqjzq1rY5qLHYOaHQ-i0y9s', '/home/sluski/Documents/project-files/notes1.txt')
-    # search_file_contains(10, 'notes')
-    #search_file_mediatype(10, 'text/plain')
-
-
