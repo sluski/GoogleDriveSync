@@ -1,5 +1,4 @@
-from os.path import isfile, isdir
-from os import walk, scandir
+from os.path import isdir
 import os
 from enums.file_type_enum import FileTypeEnum
 from objects.tree_element import TreeElement
@@ -17,52 +16,41 @@ class FilesTreeBuilder:
                 parent=None,
                 childrens=[],
                 thing=File(
-                    name=root.split("/")[-2],
+                    name=self.__extract_name_from_path(root),
                     type=FileTypeEnum.FOLDER,
                     location=root,
                     created=os.stat(root).st_ctime,
                     last_modified=os.stat(root).st_mtime))
 
-    def add_folder(self, folder, parent):
-        pass
-        # folder = TreeElement(
-        #     level=parent + 1,
-        #     parent=parent,
-        #     childrens=[],
-        #     thing=File(
-        #         name=folder.split,
-        #         type=FileTypeEnum.FOLDER,
-        #         location=root,
-        #         created=os.stat(root).st_ctime,
-        #         last_modified=os.stat(root).st_mtime)
-        # )
-        # folder.level = parent.level + 1
-        # folder.
-        # parent.childrens.append()
+    def add_folder(self, folder_location, parent):
+        new_folder = TreeElement(
+            level=parent.level + 1,
+            parent=parent,
+            childrens=[],
+            thing=File(
+                name=self.__extract_name_from_path(folder_location),
+                type=FileTypeEnum.FOLDER,
+                location=folder_location,
+                created=os.stat(folder_location).st_ctime,
+                last_modified=os.stat(folder_location).st_mtime)
+        )
+        parent.childrens.append(new_folder)
 
-    def add_file(self, file):
-        pass
+    def add_file(self, file_location, parent):
+        new_file = TreeElement(
+            level=parent.level + 1,
+            parent=parent,
+            childrens=[],
+            thing=File(
+                name=self.__extract_name_from_path(file_location),
+                type=FileTypeEnum.FILE,
+                location=file_location,
+                created=os.stat(file_location).st_ctime,
+                last_modified=os.stat(file_location).st_mtime
+            )
+        )
+        parent.childrens.append(new_file)
 
-
-def recur(root):
-    for root, dirs, files in walk(root):
-        for file in files:
-            print("{}/{}".format(root, file))
-        for dir in dirs:
-            recur(dir)
-
-
-# recur("/home/sluski/Documents/Laptop/Documents/files")
-# def go(path):
-#     for a in scandir(path):
-#         if a.is_dir():
-#             go(a.path)
-#         else:
-#             print(a.path)
-
-# go('/home/sluski/Documents/Laptop/Documents/files/')
-
-t = FilesTreeBuilder("/home/sluski/Documents/Laptop/Documents/files/")
-t.root
-print(t.root)
-
+    @staticmethod
+    def __extract_name_from_path(path):
+        return path.split("/")[-2]

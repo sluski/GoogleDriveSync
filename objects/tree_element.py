@@ -7,9 +7,9 @@ class TreeElement:
 
     def __str__(self):
         result = [
+            "\nThing:\n{} \n".format(self.thing),
             "Level: {} \n".format(self.level),
             "Parent: {} \n".format(self.parent),
-            "Childrens: {} \n".format(self.childrens),
-            "\nThing:\n{} \n".format(self.thing)
+            "Childrens: {} \n".format(self.childrens)
         ]
         return ''.join(result)
