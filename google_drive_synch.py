@@ -1,85 +1,42 @@
-import hashlib, os, os.path
+import hashlib
+import os
+import os.path
 
-from drive_service import DriverSerivce
-from common import Map, Pair, File
+from services.drive_service import DriverSerivce
+from services.tree_builder import FilesTreeBuilder
 
 
 class GoogleDriveSynch:
     FOLDER_MIMETYPE = 'application/vnd.google-apps.folder'
     GOOGLE_DOCUMENT_MIMETYPE = 'application/vnd.google-apps.document'
-    CREDENTIALS_FILE = 'credenetials.json'
+    CREDENTIALS_FILE = 'credentials.json'
 
     def __init__(self, folder_path):
         self.drive_service = DriverSerivce(
             'https://www.googleapis.com/auth/drive',
             GoogleDriveSynch.CREDENTIALS_FILE)
         self.folder_path = folder_path
-        self.local_tree = self.__take_metadata_from_local()
-        self.remote_tree = self.__take_metadata_from_local()
+        self.tree = FilesTreeBuilder(folder_path)
+        self.__create_local_tree(folder_path)
 
-    def synchronize(self):
-        pass
+    def __create_local_tree(self, path):
+        for entry in os.scandir(path):
+            if os.path.isdir(entry.path):
+                self.tree.add_folder(entry.path, self.tree.find_element_for_path(self.__generate_parent_path(entry.path)))
+                self.__create_local_tree(entry.path)
+            elif os.path.isfile(entry.path):
+                self.tree.add_file(entry.path, self.tree.find_element_for_path(self.__generate_parent_path(entry.path)))
 
-    '''
-        Download all files (not folders) from google drive to defined folder. In case if this same file (comparing md5)
-        is actually on local disc it will ignore downloading file
-    '''
-    def download_all(self):
-        for file in self.matched_files:
-            remote_obj = file.get('r_object')
-            new_file_path = self.folder_path + remote_obj['name']
-            if os.path.isfile(new_file_path) and self.__generate_md5(new_file_path) != remote_obj['md5Checksum']:
-                os.remove(new_file_path)
-                self.__create_new_file(new_file_path)
-                self.drive_service.download_file(remote_obj['id'], new_file_path)
-            else:
-                self.drive_service.download_file(remote_obj['id'], new_file_path)
-
-    '''
-        Adds local files metadata to class variable which contains data about local and remote files 
-    '''
-    def __take_metadata_from_local(self):
-        for file in self.__find_files_for_path(self.folder_path):
-            self.matched_files.append(
-                Map(file, Pair(File(file, self.__generate_md5(self.__create_file_path(file))), None)))
-
-
-    '''
-        Adds remote files metadata to class variable which contains data about local and remote files
-    '''
-    def __take_metadata_from_remote(self):
-        for item in self.drive_service.list_files_only():
-            for map in self.matched_files:
-                if map.key == item['name']:
-                    map.value.second = File(item['name'], item['md5Checksum'],
-                                            {'mimeType': item['mimeType'], 'id': item['id']})
-                    break
-
-    '''
-        Returns list of files (not folders) for defined path
-    '''
     @staticmethod
-    def __find_files_for_path(path):
-        return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+    def __generate_parent_path(path):
+        splitted = path.split(os.sep)
+        concatenate_paths = lambda a, b: a + os.sep + b
+        result = ''
+        del splitted[-1]
+        for ele in splitted:
+            result = concatenate_paths(result, ele) if ele is not '' else result
+        return result
 
-
-    '''
-        Creates new file if not exist
-    '''
-    @staticmethod
-    def __create_new_file(new_file_path):
-        a = open(new_file_path, "w+")
-        a.close()
-
-    '''
-        Concatenate folder_path to file_name
-    '''
-    def __create_file_path(self, fname):
-        return self.folder_path + fname
-
-    '''
-        Generate md5 based on file
-    '''
     @staticmethod
     def __generate_md5(file):
         hash_md5 = hashlib.md5()
@@ -89,4 +46,5 @@ class GoogleDriveSynch:
         return hash_md5.hexdigest()
 
 
-
+gds = GoogleDriveSynch('/home/sluski/Documents/Laptop/Documents/files')
+print(gds.root)

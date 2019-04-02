@@ -1,17 +1,20 @@
 from __future__ import print_function
+
 import io
-import auth
+
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 
-class DriverSerivce:
+from services import auth_service
 
+
+class DriverSerivce:
     FOLDER_MIMETYPE = 'application/vnd.google-apps.folder'
     GOOGLE_DOCUMENT_MIMETYPE = 'application/vnd.google-apps.document'
     DEFAULT_FILES = 'files(id, name, md5Checksum, mimeType)'
 
     def __init__(self, scopes, credetials_file):
-        self.auth_instance = auth.auth(scopes, credetials_file)
+        self.auth_instance = auth_service.auth(scopes, credetials_file)
         self.creds = self.auth_instance.getCredetials()
         self.drive_service = build('drive', 'v3', credentials=self.creds)
 
@@ -34,11 +37,11 @@ class DriverSerivce:
         media = MediaFileUpload(filename=filepath,
                                 mimetype=mimetype)
         file = self.drive_service.files().create(body=file_metadata,
-                                            media_body=media,
-                                            fields='id').execute()
+                                                 media_body=media,
+                                                 fields='id').execute()
         return file
 
-    def download_file(self, file_id, filepath):
+    def download_file(self, file_id, file_path):
         request = self.drive_service.files().get_media(fileId=file_id)
         bio = io.BytesIO()
         downloader = MediaIoBaseDownload(bio, request)
@@ -46,7 +49,7 @@ class DriverSerivce:
         while done is False:
             status, done = downloader.next_chunk()
             print("Download %d%%." % int(status.progress() * 100))
-        with open(filepath, 'wb') as f:
+        with open(file_path, 'wb') as f:
             bio.seek(0)
             f.write(bio.read())
 
