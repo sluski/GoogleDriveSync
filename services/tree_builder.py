@@ -25,7 +25,8 @@ class FilesTreeBuilder:
                     last_modified=os.stat(root).st_mtime))
             self.__elementes = {self.root.thing.location: self.root}
 
-    def add_folder(self, folder_path, parent):
+    def add_folder(self, folder_path):
+        parent = self.find_element_for_path(self.__generate_parent_path(folder_path))
         new_folder = TreeElement(
             level=parent.level + 1,
             parent=parent,
@@ -41,7 +42,8 @@ class FilesTreeBuilder:
         self.__elementes[folder_path] = new_folder
         return new_folder
 
-    def add_file(self, file_path, parent):
+    def add_file(self, file_path):
+        parent = self.find_element_for_path(self.__generate_parent_path(file_path))
         new_file = TreeElement(
             level=parent.level + 1,
             parent=parent,
@@ -74,3 +76,14 @@ class FilesTreeBuilder:
 
     def find_element_for_path(self, path):
         return self.__elementes.get(path)
+
+    @staticmethod
+    def __generate_parent_path(path):
+        splitted = path.split(os.sep)
+        concatenate_paths = lambda a, b: a + os.sep + b
+        result = ''
+        del splitted[-1]
+        for ele in splitted:
+            result = concatenate_paths(result, ele) if ele is not '' else result
+        return result
+

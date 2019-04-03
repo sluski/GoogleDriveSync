@@ -16,35 +16,24 @@ class GoogleDriveSynch:
             'https://www.googleapis.com/auth/drive',
             GoogleDriveSynch.CREDENTIALS_FILE)
         self.folder_path = folder_path
-        self.tree = FilesTreeBuilder(folder_path)
+        self.localTree = FilesTreeBuilder(folder_path)
         self.__create_local_tree(folder_path)
 
     def __create_local_tree(self, path):
         for entry in os.scandir(path):
             if os.path.isdir(entry.path):
-                self.tree.add_folder(entry.path, self.tree.find_element_for_path(self.__generate_parent_path(entry.path)))
+                self.localTree.add_folder(entry.path)
                 self.__create_local_tree(entry.path)
             elif os.path.isfile(entry.path):
-                self.tree.add_file(entry.path, self.tree.find_element_for_path(self.__generate_parent_path(entry.path)))
+                self.localTree.add_file(entry.path)
 
-    @staticmethod
-    def __generate_parent_path(path):
-        splitted = path.split(os.sep)
-        concatenate_paths = lambda a, b: a + os.sep + b
-        result = ''
-        del splitted[-1]
-        for ele in splitted:
-            result = concatenate_paths(result, ele) if ele is not '' else result
-        return result
-
-    @staticmethod
-    def __generate_md5(file):
-        hash_md5 = hashlib.md5()
-        with open(file, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
-                hash_md5.update(chunk)
-        return hash_md5.hexdigest()
-
+    def __create_remote_tree(self):
+        pass
 
 gds = GoogleDriveSynch('/home/sluski/Documents/Laptop/Documents/files')
-print(gds.root)
+# for item in gds.drive_service.list_files(100):
+print(gds.drive_service.search_files_for_folder('1fA0ETdehB-M2YUx3JZp49Z_OI7oroh8t'))
+
+# print(gds.root)
+
+

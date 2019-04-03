@@ -68,3 +68,8 @@ class DriverSerivce:
     def search_file_mediatype(self, size, mimetype):
         query = "mimeType = '{}'".format(mimetype)
         return self.search_file(self, size, query)
+
+    def search_files_for_folder(self, folder_id):
+        query = "'{}' in parents".format(folder_id)
+        return self.__search_file(100, query)
+
