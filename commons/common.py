@@ -13,4 +13,4 @@ class Common:
 
     @staticmethod
     def extract_name_from_path(path):
-        return path.split("/")[-2]
+        return path.split("/")[-1]

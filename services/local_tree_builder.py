@@ -10,10 +10,11 @@ from objects.tree_element import TreeElement
 class LocalFilesTreeBuilder:
 
     def __init__(self, root_path):
+        self.elements = {}
         if not isdir(root_path):
             raise Exception("Root is not folder. Trying set {} as root element".format(root_path))
         else:
-            self.__create_local_tree(root_path)
+            self.__create_root_element(root_path)
             self.__create_local_tree(root_path)
 
     def add_folder(self, folder_path):
