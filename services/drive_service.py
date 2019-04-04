@@ -21,9 +21,7 @@ class DriverSerivce:
     def list_files(self, size):
         results = self.drive_service.files().list(
             pageSize=size, fields="nextPageToken, {}".format(DriverSerivce.DEFAULT_FILES)).execute()
-        items = results.get('files', [])
-
-        return items
+        return results.get('files', [])
 
     def list_files_only(self, size=100):
         result = []
@@ -36,10 +34,9 @@ class DriverSerivce:
         file_metadata = {'name': filename}
         media = MediaFileUpload(filename=filepath,
                                 mimetype=mimetype)
-        file = self.drive_service.files().create(body=file_metadata,
+        return self.drive_service.files().create(body=file_metadata,
                                                  media_body=media,
                                                  fields='id').execute()
-        return file
 
     def download_file(self, file_id, file_path):
         request = self.drive_service.files().get_media(fileId=file_id)
@@ -72,4 +69,3 @@ class DriverSerivce:
     def search_files_for_folder(self, folder_id):
         query = "'{}' in parents".format(folder_id)
         return self.__search_file(100, query)
-
