@@ -1,31 +1,31 @@
 from __future__ import print_function
+
 import io
-import auth
+
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 
-class DriverSerivce:
+from services import auth_service
 
+
+class DriverSerivce:
     FOLDER_MIMETYPE = 'application/vnd.google-apps.folder'
     GOOGLE_DOCUMENT_MIMETYPE = 'application/vnd.google-apps.document'
     DEFAULT_FILES = 'files(id, name, md5Checksum, mimeType)'
 
     def __init__(self, scopes, credetials_file):
-        self.auth_instance = auth.auth(scopes, credetials_file)
+        self.auth_instance = auth_service.auth(scopes, credetials_file)
         self.creds = self.auth_instance.getCredetials()
         self.drive_service = build('drive', 'v3', credentials=self.creds)
 
-
-    def list_files(self, size=100):
+    def list_files(self, size):
         results = self.drive_service.files().list(
-            pageSize=size, fields="nextPageToken, %s" % DriverSerivce.DEFAULT_FILES).execute()
-        items = results.get('files', [])
-
-        return items
+            pageSize=size, fields="nextPageToken, {}".format(DriverSerivce.DEFAULT_FILES)).execute()
+        return results.get('files', [])
 
     def list_files_only(self, size=100):
         result = []
-        for item in self.list_files():
+        for item in self.list_files(size):
             if item['mimeType'] not in [DriverSerivce.FOLDER_MIMETYPE, DriverSerivce.GOOGLE_DOCUMENT_MIMETYPE]:
                 result.append(item)
         return result
@@ -34,12 +34,11 @@ class DriverSerivce:
         file_metadata = {'name': filename}
         media = MediaFileUpload(filename=filepath,
                                 mimetype=mimetype)
-        file = self.drive_service.files().create(body=file_metadata,
-                                            media_body=media,
-                                            fields='id').execute()
-        return file
+        return self.drive_service.files().create(body=file_metadata,
+                                                 media_body=media,
+                                                 fields='id').execute()
 
-    def download_file(self, file_id, filepath):
+    def download_file(self, file_id, file_path):
         request = self.drive_service.files().get_media(fileId=file_id)
         bio = io.BytesIO()
         downloader = MediaIoBaseDownload(bio, request)
@@ -47,10 +46,9 @@ class DriverSerivce:
         while done is False:
             status, done = downloader.next_chunk()
             print("Download %d%%." % int(status.progress() * 100))
-        with open(filepath, 'wb') as f:
+        with open(file_path, 'wb') as f:
             bio.seek(0)
             f.write(bio.read())
-
 
     def __search_file(self, size, query):
         results = self.drive_service.files().list(
@@ -68,15 +66,6 @@ class DriverSerivce:
         query = "mimeType = '{}'".format(mimetype)
         return self.search_file(self, size, query)
 
-
-    # list_files(10)
-    # print('____________')
-    # save_file('notes', '/home/sluski/Documents/notes/', 'text/plain')
-    # print('____________')
-    # list_files(10)
-    # print('____________')
-    # download_file('1Q96A0EBzjiqjzq1rY5qLHYOaHQ-i0y9s', '/home/sluski/Documents/project-files/notes1.txt')
-    # search_file_contains(10, 'notes')
-    #search_file_mediatype(10, 'text/plain')
-
-
+    def search_files_for_folder(self, folder_id):
+        query = "'{}' in parents".format(folder_id)
+        return self.__search_file(100, query)

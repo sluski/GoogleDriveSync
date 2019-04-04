@@ -1,8 +1,10 @@
 from __future__ import print_function
-import pickle
+
 import os.path
-from google_auth_oauthlib.flow import InstalledAppFlow
+import pickle
+
 from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
 
 
 class auth:
@@ -10,7 +12,6 @@ class auth:
     def __init__(self, SCOPES, CREDENTIALS_FILE):
         self.SCOPES = SCOPES
         self.CREDENTIALS_FILE = CREDENTIALS_FILE
-
 
     def getCredetials(self):
         credentials = None
