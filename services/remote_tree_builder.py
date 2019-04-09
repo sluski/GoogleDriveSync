@@ -1,10 +1,14 @@
-
-def foo(id):
-    for item in gds.drive_service.search_files_for_folder(id):
-        if (item['mimeType'] == ''):
-            foo(item['id'])
-        else:
-            print(item)
+from enums.application_consts_enum import ApplicationConstsEnum
+from services.google_drive_service import GoogleDriveService
 
 
-foo('root')
+class RemoteFilesTreeBuilder:
+
+    def __init__(self, credetials_file):
+        self.elements = {}
+        self.google_drive_service = GoogleDriveService(ApplicationConstsEnum.GOOGLE_API_SCOPE, credetials_file)
+
+
+    def __create_root_folder(self, root):
+        pass
+
