@@ -18,7 +18,7 @@ class LocalFilesTreeBuilder:
             self.__create_local_tree(root_path)
 
     def add_folder(self, folder_path):
-        parent = self.__find_element_for_path(self.__generate_parent_path(folder_path))
+        parent = self.__find_element_for_path(Common.get_parent_path(folder_path))
         new_folder = TreeElement(
             level=parent.level + 1,
             parent=parent,
@@ -35,7 +35,7 @@ class LocalFilesTreeBuilder:
         return new_folder
 
     def add_file(self, file_path):
-        parent = self.__find_element_for_path(self.__generate_parent_path(file_path))
+        parent = self.__find_element_for_path(Common.get_parent_path(file_path))
         new_file = TreeElement(
             level=parent.level + 1,
             parent=parent,
@@ -71,19 +71,10 @@ class LocalFilesTreeBuilder:
         for entry in os.scandir(path):
             if os.path.isdir(entry.path):
                 self.add_folder(entry.path)
-                self.__create_local_tree(entry.path)
+                Common.get_parent_path(entry.path)
             elif os.path.isfile(entry.path):
                 self.add_file(entry.path)
 
     def __find_element_for_path(self, path):
         return self.elements.get(path)
 
-    @staticmethod
-    def __generate_parent_path(path):
-        splitted = path.split(os.sep)
-        concatenate_paths = lambda a, b: a + os.sep + b
-        result = ''
-        del splitted[-1]
-        for ele in splitted:
-            result = concatenate_paths(result, ele) if ele is not '' else result
-        return result
