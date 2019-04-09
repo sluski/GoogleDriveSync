@@ -1,4 +1,5 @@
 import hashlib
+import os
 
 
 class Common:
@@ -14,3 +15,13 @@ class Common:
     @staticmethod
     def extract_name_from_path(path):
         return path.split("/")[-1]
+
+    @staticmethod
+    def get_parent_path(path, sep=os.sep):
+        splitted = path.split(sep)
+        concatenate_paths = lambda a, b: a + sep + b
+        result = ''
+        del splitted[-1]
+        for ele in splitted:
+            result = concatenate_paths(result, ele) if ele is not '' else result
+        return result
