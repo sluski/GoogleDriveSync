@@ -1,4 +1,4 @@
-class File:
+class LocalFile:
     def __init__(self, name, type, location, created, last_modified, md5=None, size=None):
         self.name = name
         self.type = type
