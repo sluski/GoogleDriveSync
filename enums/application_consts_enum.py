@@ -7,3 +7,4 @@ class ApplicationConstsEnum(Enum):
     CREDENTIALS_FILE = 'credentials.json'
     GOOGLE_FOLDER_MIMETYPE = 'application/vnd.google-apps.folder'
     GOOGLE_API_SCOPE = 'https://www.googleapis.com/auth/drive'
+    GOOGLE_URL_SEPARATOR = '%2C%20'
