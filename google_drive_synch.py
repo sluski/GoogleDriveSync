@@ -9,8 +9,11 @@ class GoogleDriveSynch:
     def __init__(self, local_root_folder_path):
         self.local_root_folder_path = local_root_folder_path
         self.localTree = LocalFilesTreeBuilder(local_root_folder_path)
-        # self.remoteTree = RemoteFilesTreeBuilder()
+        self.remoteTree = RemoteFilesTreeBuilder()
 
 gds = GoogleDriveSynch('/home/sluski/Documents/Laptop/Documents/files')
 
-print(gds.localTree.elements)
+result = gds.localTree.elements
+
+# for k, v in result.items():
+#     print(k, v)

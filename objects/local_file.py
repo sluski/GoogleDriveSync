@@ -1,11 +1,10 @@
-class LocalFile:
+from objects.file import File
+
+
+class LocalFile(File):
     def __init__(self, name, type, location, created, last_modified, md5=None, size=None):
-        self.name = name
-        self.type = type
+        File.__init__(self, name, type, created, md5, size)
         self.location = location
-        self.md5 = md5
-        self.size = size
-        self.created = created
         self.last_modified = last_modified
 
     def __str__(self):

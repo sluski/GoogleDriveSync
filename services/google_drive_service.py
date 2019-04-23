@@ -12,10 +12,14 @@ from services import auth_service
 class GoogleDriveService:
     FOLDER_MIMETYPE = 'application/vnd.google-apps.folder'
     GOOGLE_DOCUMENT_MIMETYPE = 'application/vnd.google-apps.document'
-    DEFAULT_FILES = ['id', 'name', 'md5Checksum', 'mimeType', 'exportLinks']
+    DEFAULT_FILES = ['id', 'name', 'md5Checksum', 'mimeType', 'parents']
 
     def __init__(self, scopes, credetials_file):
         self.drive_service = GoogleApiProvider(scopes, credetials_file)
 
     def files_by_id(self, parent_id):
         print(self.drive_service.find_files_for_folder_id(parent_id))
+
+    def file_by_id(self, file_id):
+        json_response = self.drive_service.find_file_by_id(file_id)
+        print(json_response)
