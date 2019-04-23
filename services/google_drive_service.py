@@ -19,13 +19,12 @@ class GoogleDriveService:
 
     def find_files_by_folder_id(self, parent_id):
         res = self.drive_service.find_files_for_folder_id(parent_id)
-        print("res", res)
-        # return RemoteFile(
-        #     remote_id=res["id"],
-        #     name=res["name"],
-        #     type=self.__mime_type_to_enum_type(res["mimeType"]),
-        #     created=res["createdTime"]
-        # )
+        return RemoteFile(
+            remote_id=res["id"],
+            name=res["name"],
+            type=self.__mime_type_to_enum_type(res["mimeType"]),
+            created=res["createdTime"]
+        )
 
     def find_file_by_id(self, file_id):
         json_response = self.drive_service.find_file_by_id(file_id)

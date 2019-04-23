@@ -38,15 +38,11 @@ class RemoteFilesTreeBuilder:
         parent.childrens.append(new_folder)
 
     def __create_root_folder(self, root_id):
-        # self.root = TreeElement(
-        #     level=0,
-        #     relative_path='.'+os.sep,
-        #     parent=None,
-        #     childrens=[],
-        #     thing=self.google_drive_service.find_file_by_id(root_id)
-        # )
-        # self.elements[self.root.relative_path] = self.root
-        print(self.google_drive_service.find_files_by_folder_id('root'))
-
-    # def __create_remote_tree(self):
-
+        self.root = TreeElement(
+            level=0,
+            relative_path='.'+os.sep,
+            parent=None,
+            childrens=[],
+            thing=self.google_drive_service.find_file_by_id(root_id)
+        )
+        self.elements[self.root.relative_path] = self.root
