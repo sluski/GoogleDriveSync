@@ -12,6 +12,11 @@ class RemoteFilesTreeBuilder:
         self.elements = {}
         self.google_drive_service = GoogleDriveService(ApplicationConstsEnum.GOOGLE_API_SCOPE.value, ApplicationConstsEnum.CREDENTIALS_FILE.value)
         self.__create_root_folder(root_id)
+        # self.__create_remote_tree()
+
+    def __create_remote_tree(self):
+        for e in self.google_drive_service.find_files_by_folder_id(self.root.thing.remote_id):
+            print(e)
 
     def __add_file(self, parent, level, file_id):
         remote_thing = self.google_drive_service.find_file_by_id(file_id)
@@ -25,7 +30,7 @@ class RemoteFilesTreeBuilder:
         self.elements[new_file.relative_path] = new_file
         parent.childrens.append(new_file)
 
-    def add_folder(self, parent, level, folder_id):
+    def __add_folder(self, parent, level, folder_id):
         remote_thing = self.google_drive_service.find_file_by_id(folder_id)
         new_folder = TreeElement(
             level=level,
@@ -46,3 +51,8 @@ class RemoteFilesTreeBuilder:
             thing=self.google_drive_service.find_file_by_id(root_id)
         )
         self.elements[self.root.relative_path] = self.root
+
+
+rtb = RemoteFilesTreeBuilder('root')
+for k, v in rtb.elements.items():
+    print(k, v)

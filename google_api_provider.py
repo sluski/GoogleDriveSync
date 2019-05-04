@@ -8,36 +8,35 @@ class GoogleApiProvider:
 
     def __init__(self, scope,  credentials_file, fields=["id", "name", "mimeType", "createdTime", "md5Checksum", "size"]):
         self.fields = fields
-        self.__concatenated_fields = self.__create_fields_url_part(self.fields)
+        self.__concatenated_fields = self.__concatenate_fields(fields)
         self.token = auth_service.auth(scope, credentials_file).getCredetials().token
 
     def find_files_for_folder_id(self, folder_id):
-        query = self.__format_to_utf_8("'{}' in parents".format(folder_id))
-        res = self.__create_get_request("https://www.googleapis.com/drive/v3/files?q={}".format(query))
+        res = self.__create_get_files_request(folder_id)
         if res.status_code == 200:
             return res.json()['files']
-
         return res.json()
 
     def find_file_by_id(self, file_id):
-        return self.__create_get_request("https://www.googleapis.com/drive/v3/files/{}".format(file_id)).json()
+        return self.__create_get_file_request(file_id).json()
 
-    def __create_get_request(self, url, defined_fields=True):
+    def __create_get_file_request(self, file_id):
+        url = "https://www.googleapis.com/drive/v3/files/{}".format(file_id)
+        headers = {'Accept': 'application/json', 'Authorization': "Bearer {}".format(self.token)}
+        req = requests.get(url + "?fields={}".format(self.__concatenated_fields), headers=headers)
+        return req
+
+    def __create_get_files_request(self, parent_id):
         headers = {'Accept': 'application/json', 'Authorization': 'Bearer {}'.format(self.token)}
-        if defined_fields:
-            res = requests.get(url + "?fields={}".format(self.__concatenated_fields), headers=headers)
-        else:
-            res = requests.get(url, headers=headers)
-
-        print(res.url)
+        res = requests.get("https://www.googleapis.com/drive/v3/files?q='{}' in parents&fields=files({})".format(parent_id, self.__concatenated_fields), headers=headers)
         return res
 
     @staticmethod
-    def __create_fields_url_part(fields):
-        result = ''
+    def __concatenate_fields(fields):
+        result = ""
         for f in fields:
-            result = result + f + ApplicationConstsEnum.GOOGLE_URL_SEPARATOR.value
-        return result[:-6]
+            result = result + f + ", "
+        return result[:-2]
 
     @staticmethod
     def __format_to_utf_8(unformatted_string):
@@ -51,4 +50,7 @@ class GoogleApiProvider:
         return result
 
 
-
+# gap = GoogleApiProvider(ApplicationConstsEnum.GOOGLE_API_SCOPE.value, ApplicationConstsEnum.CREDENTIALS_FILE.value)
+#
+# print(gap.find_files_for_folder_id('root'))
+# print(gap.find_file_by_id('1WC7XWLgw1ipdM3qL9iyumX7p9bkHr9Ib'))
