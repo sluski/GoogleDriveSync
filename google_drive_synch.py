@@ -12,8 +12,3 @@ class GoogleDriveSynch:
         self.remoteTree = RemoteFilesTreeBuilder('root')
 
 gds = GoogleDriveSynch('/home/sluski/Documents/Laptop/Documents/files')
-
-# print(gds.localTree.elements)
-for e in gds.remoteTree.elements:
-    print(e)
-print()

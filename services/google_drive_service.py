@@ -19,12 +19,9 @@ class GoogleDriveService:
 
     def find_files_by_folder_id(self, parent_id):
         result = []
-        res = self.drive_service.find_files_for_folder_id(parent_id)
-        for e in res:
-            if self.__is_folder(e["mimeType"]):
-                result.append(self.__create_new_folder(e))
-            else:
-                result.append(self.__create_new_file(e))
+        response_list = self.drive_service.find_files_for_folder_id(parent_id)
+        for e in response_list:
+            result.append(self.__create_new_element(e))
 
         return result
 
