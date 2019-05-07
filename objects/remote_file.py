@@ -9,7 +9,15 @@ class RemoteFile(File):
         self.remote_id = remote_id
 
     def __str__(self):
-        return str(self.remote_id) + ", " + str(self.name) + ", " + str(self.type) + ", " + str(self.created) + ", " + str(self.md5) + ", " + str(self.size)
+        result = [
+            "Remote id: {}".format(self.remote_id),
+            "Name: {} \n".format(self.name),
+            "Type: {} \n".format(self.type),
+            "MD5: {} \n".format(self.md5),
+            "Size: {} \n".format(self.size),
+            "Created: {} \n".format(self.created)
+        ]
+        return ''.join(result)
 
     def is_folder(self):
         return self.type == FileTypeEnum.FOLDER.value

@@ -19,7 +19,7 @@ class RemoteFilesTreeBuilder:
             if e.is_folder():
                 folder = self.__add_folder(parent, level, e)
                 self.__create_remote_tree(folder, level+1)
-            self.elements[parent.relative_path + os.sep + e.name] = e
+            self.__add_file(parent, level, e)
 
 
     def __add_file(self, parent, level, file):

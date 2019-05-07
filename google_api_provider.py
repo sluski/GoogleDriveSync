@@ -49,8 +49,7 @@ class GoogleApiProvider:
                 result = result + unformatted_string[i]
         return result
 
-
+#
 # gap = GoogleApiProvider(ApplicationConstsEnum.GOOGLE_API_SCOPE.value, ApplicationConstsEnum.CREDENTIALS_FILE.value)
 #
 # print(gap.find_files_for_folder_id('root'))
-# print(gap.find_file_by_id('1WC7XWLgw1ipdM3qL9iyumX7p9bkHr9Ib'))

@@ -26,7 +26,7 @@ class GoogleDriveService:
         return result
 
     def __create_new_element(self, res):
-        if self.__mime_type_to_enum_type(res["mimeType"]) == FileTypeEnum.FILE:
+        if self.__mime_type_to_enum_type(res["mimeType"]) == FileTypeEnum.FILE.value:
             return self.__create_new_file(res)
         else:
             return self.__create_new_folder(res)
