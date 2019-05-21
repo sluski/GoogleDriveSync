@@ -6,7 +6,7 @@ from services import auth_service
 
 class GoogleApiProvider:
 
-    def __init__(self, scope,  credentials_file, fields=["id", "name", "mimeType", "createdTime", "md5Checksum", "size"]):
+    def __init__(self, scope,  credentials_file, fields=["id", "name", "mimeType", "createdTime", "md5Checksum", "size", "mimeType"]):
         self.fields = fields
         self.__concatenated_fields = self.__concatenate_fields(fields)
         self.token = auth_service.auth(scope, credentials_file).getCredetials().token
@@ -19,6 +19,10 @@ class GoogleApiProvider:
 
     def find_file_by_id(self, file_id):
         return self.__create_get_file_request(file_id).json()
+
+    def download_file(self, file_id):
+        headers = {'Accept': 'application/json', 'Authorization': "Bearer {}".format(self.token)}
+        return requests.get("https://www.googleapis.com/drive/v3/files/{}?alt=media".format(file_id), headers=headers)
 
     def __create_get_file_request(self, file_id):
         url = "https://www.googleapis.com/drive/v3/files/{}".format(file_id)

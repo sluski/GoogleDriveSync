@@ -4,18 +4,18 @@ from objects.file import File
 
 
 class RemoteFile(File):
-    def __init__(self, remote_id, name, type, created, md5=None, size=None):
+    def __init__(self, remote_id, name, type, created, mimeType=None, md5=None, size=None):
         File.__init__(self, name, type, created, md5, size)
         self.remote_id = remote_id
+        self.mimeType = mimeType
 
     def __str__(self):
         result = [
-            "Remote id: {}".format(self.remote_id),
+            "Remote id: {} \n".format(self.remote_id),
             "Name: {} \n".format(self.name),
-            "Type: {} \n".format(self.type),
             "MD5: {} \n".format(self.md5),
-            "Size: {} \n".format(self.size),
-            "Created: {} \n".format(self.created)
+            "Type: {} \n".format(self.type),
+            "MimeType: {}".format(self.mimeType)
         ]
         return ''.join(result)
 

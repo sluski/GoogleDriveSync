@@ -8,10 +8,7 @@ class TreeElement:
 
     def __str__(self):
         result = [
-            "\n> Thing:\n{} \n".format(self.thing),
-            "> Level: {} \n".format(self.level),
-            "> Relative path: {} \n".format(self.relative_path),
-            "> Parent: {} \n".format(self.parent),
-            "> Childrens: {} \n".format(self.childrens)
+            "Level: {}, Relative path: {} \n".format(self.level, self.relative_path),
+            "Thing: {}".format(self.thing),
         ]
         return ''.join(result)

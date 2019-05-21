@@ -9,7 +9,6 @@ from enums.application_consts_enum import ApplicationConstsEnum
 from enums.file_type_enum import FileTypeEnum
 from google_api_provider import GoogleApiProvider
 from objects.remote_file import RemoteFile
-from services import auth_service
 
 
 class GoogleDriveService:
@@ -46,12 +45,19 @@ class GoogleDriveService:
             type=self.__mime_type_to_enum_type(res["mimeType"]),
             created=res["createdTime"],
             md5=res["md5Checksum"],
-            size="size"
+            size=res["size"],
+            mimeType=res["mimeType"]
         )
 
     def find_file_by_id(self, file_id):
         json_response = self.drive_service.find_file_by_id(file_id)
         return self.__create_new_element(json_response)
+
+    def download_file(self, file_id, location_to_save):
+        response = self.drive_service.download_file(file_id)
+        f = open(location_to_save, 'wb')
+        f.write(response.content)
+        f.close()
 
     @staticmethod
     def __is_folder(mime_type):
