@@ -66,17 +66,15 @@ class GoogleDriveSynch:
                     files_sorted = False
             print(files)
 
-
-
-
-        for k, v in local_to_remote.items():
-            # root_path = ""
-            # for n in (local_root_folder_path + k[1:]).split("/")[1:-1]
-            #     root_path += "/" + n
+        for k in folders:
+            v = self.remoteTree.elements.get(k)
             if v.thing.type == FileTypeEnum.FOLDER.value:
-                print("Creating directory {}".format(v.thing.name))
                 path = local_root_folder_path + k[1:]
-                os.mkdir(path)
+                print("Creating directory {}".format(path))
+                try:
+                    os.mkdir(path)
+                except FileExistsError:
+                    pass
 
         for k, v in local_to_remote.items():
             if v.thing.type == FileTypeEnum.FILE.value:
